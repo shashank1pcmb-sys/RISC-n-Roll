@@ -9,6 +9,16 @@ module imem(
     input  logic [31:0] a,   // Address
     output logic [31:0] rd   // Instruction
 );
+
+    logic [31:0] RAM [63:0];   // 64 words, 32 bits each
+
+    // Load program from a hex text file
+    initial $readmemh("riscvtest.txt", RAM);
+
+    // Combinational read, word-aligned (a is a byte address)
+    assign rd = RAM[a[7:2]];
+
+endmodule
 ```
 
 ### Guidelines
