@@ -10,6 +10,26 @@ module extend(
     input  logic [1:0]  immsrc,    // Immediate type selector
     output logic [31:0] immext     // Sign-extended immediate
 );
+
+    always_comb begin
+        case (immsrc)
+            // I-type: imm[11:0] = instr[31:20]
+            2'b00: immext = {{20{instr[31]}}, instr[31:20]};
+
+            // S-type: imm[11:5] = instr[31:25], imm[4:0] = instr[11:7]
+            2'b01: immext = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+
+            // B-type: imm[12|11|10:5|4:1] (bit 0 omitted, datapath shifts left by 1)
+            2'b10: immext = {{20{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8]};
+
+            // J-type: imm[20|19:12|11|10:1] (bit 0 omitted, datapath shifts left by 1)
+            2'b11: immext = {{12{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21]};
+
+            default: immext = 32'd0;
+        endcase
+    end
+
+endmodule
 ```
 
 ### Working
