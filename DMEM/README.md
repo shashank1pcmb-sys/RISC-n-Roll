@@ -12,6 +12,18 @@ module dmem(
     input  logic [31:0] wd,  // Write data
     output logic [31:0] rd   // Read data
 );
+
+    logic [31:0] RAM [63:0];   // 64 words, 32 bits each
+
+    // Combinational read, word-aligned (a is a byte address)
+    assign rd = RAM[a[7:2]];
+
+    // Synchronous write on rising clock edge
+    always_ff @(posedge clk) begin
+        if (we) RAM[a[7:2]] <= wd;
+    end
+
+endmodule
 ```
 
 ### Guidelines
