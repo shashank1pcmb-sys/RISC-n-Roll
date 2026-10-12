@@ -14,6 +14,20 @@ module regfile(
     input  logic [31:0] wd3,       // write data for port 3
     output logic [31:0] rd1, rd2   // read data outputs
 );
+
+    logic [31:0] rf [31:0];   // 32 registers, 32 bits each
+
+    // Synchronous write (register 0 is never written)
+    always_ff @(posedge clk) begin
+        if (we3 && (a3 != 5'd0))
+            rf[a3] <= wd3;
+    end
+
+    // Combinational reads (register 0 always reads as 0)
+    assign rd1 = (a1 != 5'd0) ? rf[a1] : 32'd0;
+    assign rd2 = (a2 != 5'd0) ? rf[a2] : 32'd0;
+
+endmodule
 ```
 
 ### Working
