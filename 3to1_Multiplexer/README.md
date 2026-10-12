@@ -12,6 +12,17 @@ module mux3 #(parameter WIDTH = 8)(
     input  logic [1:0]       s,   // 2-bit Select line
     output logic [WIDTH-1:0] y    // Output
     );
+    // s = 00 -> d0 ; s = 01 -> d1 ; s = 10 -> d2 ; s = 11 -> d2 (unused code)
+    always_comb begin
+        case (s)
+            2'b00:   y = d0;
+            2'b01:   y = d1;
+            2'b10:   y = d2;
+            default: y = d2;   // covers 2'b11 (and X/Z) so no latch is inferred
+        endcase
+    end
+
+endmodule
 ```
 
 ### Fixed Interface
