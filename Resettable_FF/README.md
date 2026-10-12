@@ -11,6 +11,14 @@ module flopr #(parameter WIDTH = 8)(
     input  logic              reset, // Asynchronous reset
     output logic [WIDTH-1:0] q      // Data output
 );
+
+    always_ff @(posedge clk, posedge reset) begin
+        if (reset) q <= '0;   // reset has priority
+        else       q <= d;
+    end
+
+endmodule
+
 ```
 
 ### Working
