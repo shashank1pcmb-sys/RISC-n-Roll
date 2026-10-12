@@ -12,6 +12,29 @@ module aludec(
     input  logic [1:0]  ALUOp,     // high-level ALU operation
     output logic [2:0]  ALUControl // ALU operation code
 );
+
+    logic rtypesub;
+    assign rtypesub = funct7b5 & opb5;   // 1 only for R-type SUB
+
+    always_comb begin
+        case (ALUOp)
+            2'b00:   ALUControl = 3'b000;   // LW, SW -> add
+            2'b01:   ALUControl = 3'b001;   // BEQ    -> subtract
+            2'b10: begin                    // R-type / I-type arithmetic
+                case (funct3)
+                    3'b000:  ALUControl = rtypesub ? 3'b001 : 3'b000; // SUB : ADD/ADDI
+                    3'b010:  ALUControl = 3'b101;                     // SLT, SLTI
+                    3'b110:  ALUControl = 3'b011;                     // OR,  ORI
+                    3'b111:  ALUControl = 3'b010;                     // AND, ANDI
+                    default: ALUControl = 3'b000;                     // unsupported funct3
+                endcase
+            end
+            default: ALUControl = 3'b000;   // ALUOp = 11 (unused)
+        endcase
+    end
+
+endmodule
+);
 ```
 
 ### Working
